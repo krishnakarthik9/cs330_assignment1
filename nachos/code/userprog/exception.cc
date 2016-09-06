@@ -160,14 +160,24 @@ ExceptionHandler(ExceptionType which)
     } 
 	
     else if ((which == SyscallException) && (type == SYScall_GetReg)) {
-        int reg_num=(int)(machine->ReadRegister(4));
-	int curr_reg=(int)(machine->ReadRegister(reg_num)); 
+        int reg_num=(machine->ReadRegister(4));
+	int curr_reg=(machine->ReadRegister(reg_num)); 
 	machine->WriteRegister(2,curr_reg); 
        // Advance program counters.
        machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
        machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
     }
+     else if ((which == SyscallException) && (type == SYScall_GetPA)) {
+        int virtual_address=(machine->ReadRegister(4));
+        //int curr_reg=(int)(machine->ReadRegister(reg_num));
+        //machine->WriteRegister(2,curr_reg);
+       // Advance program counters.
+       machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+       machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+       machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
+    }
+
 
 	else {
 	printf("Unexpected user mode exception %d %d\n", which, type);
