@@ -170,7 +170,7 @@ ExceptionHandler(ExceptionType which)
     }
      else if ((which == SyscallException) && (type == SYScall_GetPA)) {
         int virtual_address=(machine->ReadRegister(4));
-	int virt_page_num=(virtual_address)/(machine->PageSize);
+	int virt_page_num=(virtual_address)/(PageSize);
 	int return_value;
 	if((virt_page_num<=(machine->pageTableSize))&&)
 	{
