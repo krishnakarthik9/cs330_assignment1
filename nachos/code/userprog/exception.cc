@@ -174,6 +174,8 @@ ExceptionHandler(ExceptionType which)
 	int return_value;
 	if((virt_page_num<=(machine->pageTableSize))&&(machine->NachOSpageTable[virt_page_num].valid==TRUE)&&(machine->NachOSpageTable[virt_page_num].physicalPage<=NumPhysPages))
 	{
+
+		Translate(virtual_address, &return_value, machine->pageTableSize, bool writing);
 	//virtual address to physical address should go here(def in translate method)	
 	}
 	else
