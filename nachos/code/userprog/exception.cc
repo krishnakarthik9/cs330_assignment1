@@ -172,7 +172,7 @@ ExceptionHandler(ExceptionType which)
         int virtual_address=(machine->ReadRegister(4));
 	int virt_page_num=(virtual_address)/(PageSize);
 	int return_value;
-	if((virt_page_num<=(machine->pageTableSize))&&(ProcessAddrSpace->NachOSpageTable[virt_page_num].valid==TRUE)&&(ProcessAddrSpace->NachOSpageTable[virt_page_num].physicalPage<=NumPhysPages))
+	if((virt_page_num<=(machine->pageTableSize))&&(machine->NachOSpageTable[virt_page_num].valid==TRUE)&&(machine->NachOSpageTable[virt_page_num].physicalPage<=NumPhysPages))
 	{
 	//virtual address to physical address should go here(def in translate method)	
 	}
