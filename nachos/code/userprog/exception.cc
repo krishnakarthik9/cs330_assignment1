@@ -198,6 +198,22 @@ ExceptionHandler(ExceptionType which)
        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
        machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
     }
+    else if ((which == SyscallException) && (type == SYScall_GetPID)) {
+    int curr_pid=(currentThread->pid); 
+	machine->WriteRegister(2,curr_pid); 
+       // Advance program counters.
+       machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+       machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+       machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
+    }
+     else if ((which == SyscallException) && (type == SYScall_GetPPID)) {
+    int curr_ppid=(currentThread->ppid); 
+	machine->WriteRegister(2,curr_ppid); 
+       // Advance program counters.
+       machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+       machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+       machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
+    }
 
 
 	else {
