@@ -214,6 +214,30 @@ ExceptionHandler(ExceptionType which)
        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
        machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
     }
+     else if ((which == SyscallException) && (type == SYScall_Sleep)) {
+     	//Advance PC first as the curret process will go to sleep later and we will not be able advance PC
+       machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+       machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+       machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
+        int SleepTime=(machine->ReadRegister(4));
+        if(SleepTime==0)
+        {
+        	currentThread->YieldCPU();
+        }
+        else
+        {
+        	
+        }
+      
+    }
+    else if ((which == SyscallException) && (type == SYScall_Yield)) {
+    	
+       machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+       machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+       machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
+       
+        currentThread->YieldCPU();
+    }
 
 
 	else {
