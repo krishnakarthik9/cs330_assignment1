@@ -228,9 +228,9 @@ ExceptionHandler(ExceptionType which)
         {
         	currentThread->wakeUpTime=(SleepTime+(stats->totalTicks));
         	sleepThreadList->Append((void *)currentThread);
-        	ASSERT(interrupt->getLevel() == IntOff);
+        	interrupt->SetLevel(IntOff);
         	currentThread->PutThreadToSleep();
-        	ASSERT(interrupt->getLevel() == Inton);//How to set interrupt off and on is it correct?
+        	interrupt->SetLevel(IntOn);
         }
       
     }
