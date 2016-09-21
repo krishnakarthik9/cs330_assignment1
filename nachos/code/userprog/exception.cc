@@ -242,8 +242,18 @@ ExceptionHandler(ExceptionType which)
        
         currentThread->YieldCPU();
     }
-
-
+    else if ((which == SyscallException) && (type == SYScall_Join)) {
+        int childPID=(machine->ReadRegister(4));
+        if()
+        {
+        	returnValue=-1;
+        }
+        else
+        {
+        	
+        }
+        
+    }
 	else {
 	printf("Unexpected user mode exception %d %d\n", which, type);
 	ASSERT(FALSE);
