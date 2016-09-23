@@ -226,11 +226,11 @@ ExceptionHandler(ExceptionType which)
         }
         else
         {
-        	currentThread->wakeUpTime=(SleepTime+(stats->totalTicks));
-        	sleepThreadList->Append((void *)currentThread);
+        	wakeUpTime=(SleepTime+(stats->totalTicks));//TODO remove wakeup time variable created in thread class
+        	sleepThreadList->SortedInsert((void *)currentThread,wakeUpTime);//TODO timerInterrupHandler change
         	interrupt->SetLevel(IntOff);
         	currentThread->PutThreadToSleep();
-        	interrupt->SetLevel(IntOn);
+        	interrupt->SetLevel(IntOn);//TODO is IntOn valid?
         }
       
     }
@@ -257,7 +257,7 @@ ExceptionHandler(ExceptionType which)
     else if ((which == SyscallException) && (type == SYScall_Exec)) {
         int filename=(machine->ReadRegister(4));
         //Code from start user process
-        //should add code to change filename into char pointer so Open can work
+        //TODO should add code to change filename into char pointer so Open can work
       OpenFile *executable = fileSystem->Open(filename);
     ProcessAddrSpace *space;
 
