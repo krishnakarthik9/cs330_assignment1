@@ -132,7 +132,7 @@ class NachOSThread {
     int getChildIndex(int childPid);
     int getChildStatus(int childPid);
 	int setChildStatus(int childPid,int st);
-	void addChildToParent(int childPid);
+	void addChildToParent(int childPid,int st);
     int numChild=0;
     ProcessAddrSpace *space;			// User code this thread is running.
 #endif

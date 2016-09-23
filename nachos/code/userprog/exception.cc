@@ -226,7 +226,7 @@ ExceptionHandler(ExceptionType which)
         }
         else
         {
-        	wakeUpTime=(SleepTime+(stats->totalTicks));//TODO remove wakeup time variable created in thread class
+        	wakeUpTime=(SleepTime+(stats->totalTicks));
         	sleepThreadList->SortedInsert((void *)currentThread,wakeUpTime);//TODO timerInterrupHandler change
         	interrupt->SetLevel(IntOff);
         	currentThread->PutThreadToSleep();
@@ -250,8 +250,16 @@ ExceptionHandler(ExceptionType which)
         }
         else
         {
-        	
+			int status=currentThread->getChildStatus(childPID);
+			currentThread->setChildStatus(childPID,Parent_Waiting);
+			interrupt->SetLevel(IntOff);
+        	currentThread->PutThreadToSleep();
+        	interrupt->SetLevel(IntOn);	
         }
+
+       machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+       machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+       machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);1
         
     }
     else if ((which == SyscallException) && (type == SYScall_Exec)) {
@@ -279,6 +287,15 @@ ExceptionHandler(ExceptionType which)
 					// by doing the syscall "exit"   
                
     }
+	else if ((which == SyscallException) && (type == SYScall_Fork)) {
+	    machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+        machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
+       
+	    NachOSThread * childThread = new NachosThread("child thread");//constructor of thread class
+		currentThread->AddChildToParent(childThread->pid,Child_Running);
+		 
+        }
      else if ((which == SyscallException) && (type == SYScall_NumInstr)) {
        
        machine->WriteRegister(2,(machine->ReadRegister(PCReg)-currentThread->startPC)/4);//TODO check if each has its own PC
