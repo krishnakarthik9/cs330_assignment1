@@ -297,13 +297,24 @@ ExceptionHandler(ExceptionType which)
 		 
         }
 	else if ((which == SyscallException) && (type == SYScall_Exit)) {
-	
+		int status=(machine->ReadRegister(4));
+		if(currentThread->parent != NULL)
+		{
+			int threadStatusAsChild=(currentThread->parent->getChildStatus(currentThread->pid));
+
+			if(threadStatusAsChild==Parent_Waiting)
+			{
+				interrupt->SetLevel(IntOff);
+        		ThreadIsReadyToRun(currentThread->parent);
+        		interrupt->SetLevel(IntOn);	
+			}
+		}
+		currentThread->Finish();//detailed in draft
 		 
         }
      else if ((which == SyscallException) && (type == SYScall_NumInstr)) {
        
        machine->WriteRegister(2,(machine->ReadRegister(PCReg)-currentThread->startPC)/4);//TODO check if each has its own PC
-       //TODO add startPC in Thread class
        machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
        machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
