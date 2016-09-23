@@ -43,6 +43,8 @@ NachOSThread::NachOSThread(char* threadName)
     startPC=int(machine->ReadRegister(PCReg));
      TotalProcesses++;
     pid=TotalProcesses;
+	childPidArray= new int[MaxThreads];
+	childStatusArray= new int[MaxThreads];
     currentThread->childpidList->append(void *(&pid));
     if(pid==1)
     {
@@ -155,17 +157,18 @@ NachOSThread::CheckOverflow()
 //----------------------------------------------------------------------
 
 //
-bool
-NachOSThread::Ischild(int pid)
-{ 	List currentList=currentThread->childpidList;
-	if(IsEmpty(currentList))
+int
+NachOSThread::getChildIndex(int childPid)
+{ 	
+	int i=0;
+	for(i=0;i<numChild;i++)
 	{
-		return False;
+		if(childPidArray[i]==childPid)
+		{
+		return i; 	
+		}
 	}
-	else
-	{
-		
-	}
+	return -1;//-1 for there is no child
 }
 void
 NachOSThread::FinishThread ()

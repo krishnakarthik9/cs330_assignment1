@@ -244,7 +244,7 @@ ExceptionHandler(ExceptionType which)
     }
     else if ((which == SyscallException) && (type == SYScall_Join)) {
         int childPID=(machine->ReadRegister(4));
-        if(!isChild(childPID))
+        if(getChildIndex(childPID)==-1)
         {
         	returnValue=-1;
         }

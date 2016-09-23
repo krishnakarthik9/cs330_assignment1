@@ -53,7 +53,7 @@
 // Size of the thread's private execution stack.
 // WATCH OUT IF THIS ISN'T BIG ENOUGH!!!!!
 #define StackSize	(4 * 1024)	// in words
-#define Max_Threads 1000
+#define MaxThreads 1000
 #define Parent_Waiting 2
 #define Child_Running 1
 // Thread state
