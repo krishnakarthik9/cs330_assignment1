@@ -296,6 +296,10 @@ ExceptionHandler(ExceptionType which)
 		currentThread->AddChildToParent(childThread->pid,Child_Running);
 		 
         }
+	else if ((which == SyscallException) && (type == SYScall_Exit)) {
+	
+		 
+        }
      else if ((which == SyscallException) && (type == SYScall_NumInstr)) {
        
        machine->WriteRegister(2,(machine->ReadRegister(PCReg)-currentThread->startPC)/4);//TODO check if each has its own PC
