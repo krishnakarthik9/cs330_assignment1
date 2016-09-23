@@ -24,7 +24,6 @@
 					// execution stack, for detecting 
 					// stack overflows
 int TotalProcesses=0;
-bool parentChild[MAX_THREADS][MAX_THREADS]={0};
 					
 
 //----------------------------------------------------------------------
@@ -52,7 +51,7 @@ NachOSThread::NachOSThread(char* threadName)
     {
     	ppid=currentThread->pid;
     }
-    parentChild[ppid][pid]=1;
+   parent=currentThread;
 #ifdef USER_PROGRAM
     space = NULL;
 #endif
