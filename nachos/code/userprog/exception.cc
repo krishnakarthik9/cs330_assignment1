@@ -254,6 +254,31 @@ ExceptionHandler(ExceptionType which)
         }
         
     }
+    else if ((which == SyscallException) && (type == SYScall_Exec)) {
+        int filename=(machine->ReadRegister(4));
+        //Code from start user process
+        //should add code to change filename into char pointer so Open can work
+      OpenFile *executable = fileSystem->Open(filename);
+    ProcessAddrSpace *space;
+
+    if (executable == NULL) {
+	printf("Unable to open file %s\n", filename);
+	return;
+    }
+    space = new ProcessAddrSpace(executable);    
+    currentThread->space = space;
+
+    delete executable;			// close file
+
+    space->InitUserCPURegisters();		// set the initial register values
+    space->RestoreStateOnSwitch();		// load page table register
+
+    machine->Run();			// jump to the user progam
+    ASSERT(FALSE);			// machine->Run never returns;
+					// the address space exits
+					// by doing the syscall "exit"   
+               
+    }
 	else {
 	printf("Unexpected user mode exception %d %d\n", which, type);
 	ASSERT(FALSE);
