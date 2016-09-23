@@ -62,8 +62,15 @@ extern void Cleanup();
 static void
 TimerInterruptHandler(int dummy)
 {
-    if (interrupt->getStatus() != IdleMode)
-	interrupt->YieldOnReturn();
+    if(sleepThreadList->IsEmpty()==TRUE)
+    {//No threads sleeping so just return
+    	return;
+    }
+    else
+    {
+    //TODO remove elements from list and put them into ready list
+    	
+    }
 }
 
 //----------------------------------------------------------------------
