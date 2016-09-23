@@ -170,6 +170,19 @@ NachOSThread::getChildIndex(int childPid)
 	}
 	return -1;//-1 for there is no child
 }
+int
+NachOSThread::getChildStatus(int childPid)
+{
+	int index=getChildIndex(childPid);
+	return childStatusArray[index];
+}
+void
+NachOSThread::setChildStatus(int childPid,int st)
+{
+	int index=getChildIndex(childPid);
+	childStatusArray[index]=st;
+	return;
+}
 void
 NachOSThread::FinishThread ()
 {
