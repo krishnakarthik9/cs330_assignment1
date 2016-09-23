@@ -157,8 +157,8 @@ NachOSThread::CheckOverflow()
 //
 bool
 NachOSThread::Ischild(int pid)
-{
-	if(IsEmpty(currentThread->childpidList))
+{ 	List currentList=currentThread->childpidList;
+	if(IsEmpty(currentList))
 	{
 		return False;
 	}
