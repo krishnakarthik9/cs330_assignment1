@@ -279,6 +279,14 @@ ExceptionHandler(ExceptionType which)
 					// by doing the syscall "exit"   
                
     }
+     else if ((which == SyscallException) && (type == SYScall_NumInstr)) {
+       
+       machine->WriteRegister(2,(machine->ReadRegister(PCReg)-currentThread->startPC)/4);//TODO check if each has its own PC
+       //TODO add startPC in Thread class
+       machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+       machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+       machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
+     }
 	else {
 	printf("Unexpected user mode exception %d %d\n", which, type);
 	ASSERT(FALSE);
