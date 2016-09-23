@@ -39,7 +39,6 @@
 
 #include "copyright.h"
 #include "utility.h"
-#include "list.h"
 #ifdef USER_PROGRAM
 #include "machine.h"
 #include "addrspace.h"
@@ -54,8 +53,9 @@
 // Size of the thread's private execution stack.
 // WATCH OUT IF THIS ISN'T BIG ENOUGH!!!!!
 #define StackSize	(4 * 1024)	// in words
-
-
+#define Max_Threads 1000
+#define Parent_Waiting 2
+#define Child_Running 1
 // Thread state
 enum ThreadStatus { JUST_CREATED, RUNNING, READY, BLOCKED };
 
@@ -127,8 +127,13 @@ class NachOSThread {
     int pid, ppid;			// My pid and my parent's pid
     int startPC;//TODO is this type correct
     NachOSThread * parent;
-    List childpidList;
-
+    int * childpidArray;
+    int * childstatusArray;
+    int getChildIndex(int childPid);
+    int getChildStatus(int childPid);
+	int setChildStatus(int childPid,int st);
+	void addChildToParent(int childPid);
+    int numChild=0;
     ProcessAddrSpace *space;			// User code this thread is running.
 #endif
 };
