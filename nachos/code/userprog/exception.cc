@@ -230,7 +230,7 @@ ExceptionHandler(ExceptionType which)
         	sleepThreadList->SortedInsert((void *)currentThread,wakeUpTime);//TODO timerInterrupHandler change
         	interrupt->SetLevel(IntOff);
         	currentThread->PutThreadToSleep();
-        	interrupt->SetLevel(IntOn);//TODO is IntOn valid?
+        	interrupt->SetLevel(IntOn);
         }
       
     }
@@ -244,7 +244,7 @@ ExceptionHandler(ExceptionType which)
     }
     else if ((which == SyscallException) && (type == SYScall_Join)) {
         int childPID=(machine->ReadRegister(4));
-        if()
+        if(!isChild(childPID))
         {
         	returnValue=-1;
         }
