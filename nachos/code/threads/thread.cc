@@ -184,6 +184,14 @@ NachOSThread::setChildStatus(int childPid,int st)
 	return;
 }
 void
+NachOSThread::addChildToParent(int childPid,int st)
+{
+	numChild++;
+	childpidArray[numChild]=pid
+	childStatusArray[numChild]=st;
+	return;
+}
+void
 NachOSThread::FinishThread ()
 {
     (void) interrupt->SetLevel(IntOff);		
