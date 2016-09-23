@@ -41,6 +41,7 @@ NachOSThread::NachOSThread(char* threadName)
     stackTop = NULL;
     stack = NULL;
     status = JUST_CREATED;
+    startPC=int(machine->ReadRegister(PCReg));
      TotalProcesses++;
     pid=TotalProcesses;
     if(pid==1)
