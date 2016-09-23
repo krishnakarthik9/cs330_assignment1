@@ -39,7 +39,7 @@
 
 #include "copyright.h"
 #include "utility.h"
-
+#include "list.h"
 #ifdef USER_PROGRAM
 #include "machine.h"
 #include "addrspace.h"
@@ -127,6 +127,7 @@ class NachOSThread {
     int pid, ppid;			// My pid and my parent's pid
     int startPC;//TODO is this type correct
     NachOSThread * parent;
+    List childpidList;
 
     ProcessAddrSpace *space;			// User code this thread is running.
 #endif
