@@ -43,6 +43,7 @@ NachOSThread::NachOSThread(char* threadName)
     startPC=int(machine->ReadRegister(PCReg));
      TotalProcesses++;
     pid=TotalProcesses;
+    currentThread->childpidList->append(void *(&pid));
     if(pid==1)
     {
     	ppid=0;
@@ -154,6 +155,18 @@ NachOSThread::CheckOverflow()
 //----------------------------------------------------------------------
 
 //
+bool
+NachOSThread::Ischild(int pid)
+{
+	if(IsEmpty(currentThread->childpidList))
+	{
+		return False;
+	}
+	else
+	{
+		
+	}
+}
 void
 NachOSThread::FinishThread ()
 {
