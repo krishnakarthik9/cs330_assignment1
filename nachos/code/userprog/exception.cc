@@ -174,9 +174,9 @@ ExceptionHandler(ExceptionType which)
 	int return_value;
 	if((virt_page_num<=(machine->pageTableSize))&&(machine->NachOSpageTable[virt_page_num].valid==TRUE)&&(machine->NachOSpageTable[virt_page_num].physicalPage<=NumPhysPages))
 	{
-
-		Translate(virtual_address, &return_value, machine->pageTableSize, bool writing);
-	//virtual address to physical address should go here(def in translate method)	
+		//TODO: verify
+			Translate(virtual_address, &return_value, 4, false);
+		//virtual address to physical address should go here(def in translate method)
 	}
 	else
 	{
@@ -227,7 +227,7 @@ ExceptionHandler(ExceptionType which)
         else
         {
         	wakeUpTime=(SleepTime+(stats->totalTicks));
-        	sleepThreadList->SortedInsert((void *)currentThread,wakeUpTime);//TODO timerInterrupHandler change
+        	sleepThreadList->SortedInsert((void *)currentThread,wakeUpTime);
         	interrupt->SetLevel(IntOff);
         	currentThread->PutThreadToSleep();
         	interrupt->SetLevel(IntOn);
@@ -250,6 +250,7 @@ ExceptionHandler(ExceptionType which)
         }
         else
         {
+        	//TODO:
 			int status=currentThread->getChildStatus(childPID);
 			currentThread->setChildStatus(childPID,Parent_Waiting);
 			interrupt->SetLevel(IntOff);
@@ -259,7 +260,7 @@ ExceptionHandler(ExceptionType which)
 
        machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
-       machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);1
+       machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
         
     }
     else if ((which == SyscallException) && (type == SYScall_Exec)) {
@@ -288,6 +289,7 @@ ExceptionHandler(ExceptionType which)
                
     }
 	else if ((which == SyscallException) && (type == SYScall_Fork)) {
+		//TODO:
 	    machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
         machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
         machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
@@ -297,6 +299,7 @@ ExceptionHandler(ExceptionType which)
 		 
         }
 	else if ((which == SyscallException) && (type == SYScall_Exit)) {
+		//TODO:
 		int status=(machine->ReadRegister(4));
 		if(currentThread->parent != NULL)
 		{
@@ -313,7 +316,7 @@ ExceptionHandler(ExceptionType which)
 		 
         }
      else if ((which == SyscallException) && (type == SYScall_NumInstr)) {
-       
+       //TODO:
        machine->WriteRegister(2,(machine->ReadRegister(PCReg)-currentThread->startPC)/4);//TODO check if each has its own PC
        machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
