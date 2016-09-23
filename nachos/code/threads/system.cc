@@ -68,8 +68,15 @@ TimerInterruptHandler(int dummy)
     }
     else
     {
-    //TODO remove elements from list and put them into ready list
-    	
+        NachOSThread *thread
+    	currentTime = stats->totalTicks;
+        while (!(sleepThreadList->IsEmpty()) && (sleepThreadList->first)->key <= currentTime){
+            thread = (NachOSThread *)(sleepThreadList->SortedRemove(&dummy));
+
+            interrupt->SetLevel(IntOff);
+            scheduler->ThreadIsReadyToRun(thread);
+            interrupt->SetLevel(IntOn);
+        }
     }
 }
 
