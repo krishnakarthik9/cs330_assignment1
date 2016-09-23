@@ -227,7 +227,7 @@ ExceptionHandler(ExceptionType which)
         else
         {
         	wakeUpTime=(SleepTime+(stats->totalTicks));
-        	sleepThreadList->SortedInsert((void *)currentThread,wakeUpTime);//TODO timerInterrupHandler change
+        	sleepThreadList->SortedInsert((void *)currentThread,wakeUpTime);
         	interrupt->SetLevel(IntOff);
         	currentThread->PutThreadToSleep();
         	interrupt->SetLevel(IntOn);
