@@ -126,6 +126,7 @@ class NachOSThread {
     void RestoreUserState();		// restore user-level register state
     int pid, ppid;			// My pid and my parent's pid
     int startPC;//TODO is this type correct
+    NachOSThread * parent;
 
     ProcessAddrSpace *space;			// User code this thread is running.
 #endif
