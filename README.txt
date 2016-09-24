@@ -1,5 +1,5 @@
-# cs330
-krishna's and gowtham's assignments for cs330 course in iitk 2016
+
+CS330 ASSIGNMENT1 README
 
 New System calls are added in exception.cc and NachOSThread 
 variables and functions are added in thread.cc and thread.h 
