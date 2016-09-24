@@ -67,7 +67,19 @@ status of them respectively
 5)if not just set return_value=-1
 6)
 
+SYScall_Exec
 
+Use StartUserProcess() funcion code for Executig the file
+
+SYScall_Fork
+
+
+SYScall_Exit
+
+Check if it's parent is waiting for it
+If so then Set interrupts off and start runing paretn using ThreadIsReadyToRun() function
+set interrupts back on
+Then Destroy the thread using Finish() function
 
 
 
