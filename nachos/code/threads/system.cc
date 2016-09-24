@@ -17,15 +17,15 @@ NachOSscheduler *scheduler;			// the ready list
 Interrupt *interrupt;			// interrupt status
 Statistics *stats;			// performance metrics
 Timer *timer;				// the hardware timer device,
-					// for invoking context switches
+// for invoking context switches
 sleepThreadList = new List();
 
 #ifdef FILESYS_NEEDED
-FileSystem  *fileSystem;
+FileSystem *fileSystem;
 #endif
 
 #ifdef FILESYS
-SynchDisk   *synchDisk;
+SynchDisk *synchDisk;
 #endif
 
 #ifdef USER_PROGRAM	// requires either FILESYS or FILESYS_STUB
@@ -40,7 +40,6 @@ bool initializedConsoleSemaphores;
 
 // External definition, to allow us to take a pointer to this function
 extern void Cleanup();
-
 
 //----------------------------------------------------------------------
 // TimerInterruptHandler
@@ -59,25 +58,21 @@ extern void Cleanup();
 //	"dummy" is because every interrupt handler takes one argument,
 //		whether it needs it or not.
 //----------------------------------------------------------------------
-static void
-TimerInterruptHandler(int dummy)
-{
-    if(sleepThreadList->IsEmpty()==TRUE)
-    {//No threads sleeping so just return
-    	return;
-    }
-    else
-    {
-        NachOSThread *thread;
-    	currentTime = stats->totalTicks;
-        while (!(sleepThreadList->IsEmpty()) && (sleepThreadList->first)->key <= currentTime){
-            thread = (NachOSThread *)(sleepThreadList->SortedRemove(&dummy));
+static void TimerInterruptHandler(int dummy) {
+	if (sleepThreadList->IsEmpty() == TRUE) {//No threads sleeping so just return
+		return;
+	} else {
+		NachOSThread *thread;
+		currentTime = stats->totalTicks;
+		while (!(sleepThreadList->IsEmpty())
+				&& (sleepThreadList->first)->key <= currentTime) {
+			thread = (NachOSThread *) (sleepThreadList->SortedRemove(&dummy));
 
-            interrupt->SetLevel(IntOff);
-            scheduler->ThreadIsReadyToRun(thread);
-            interrupt->SetLevel(IntOn);
-        }
-    }
+			interrupt->SetLevel(IntOff);
+			scheduler->ThreadIsReadyToRun(thread);
+			interrupt->SetLevel(IntOn);
+		}
+	}
 }
 
 //----------------------------------------------------------------------
@@ -90,95 +85,93 @@ TimerInterruptHandler(int dummy)
 //	"argv" is an array of strings, one for each command line argument
 //		ex: "nachos -d +" -> argv = {"nachos", "-d", "+"}
 //----------------------------------------------------------------------
-void
-Initialize(int argc, char **argv)
-{
-    int argCount;
-    char* debugArgs = "";
-    bool randomYield = FALSE;
+void Initialize(int argc, char **argv) {
+	int argCount;
+	char* debugArgs = "";
+	bool randomYield = FALSE;
 
-    initializedConsoleSemaphores = false;
+	initializedConsoleSemaphores = false;
 
 #ifdef USER_PROGRAM
-    bool debugUserProg = FALSE;	// single step user program
+	bool debugUserProg = FALSE;	// single step user program
 #endif
 #ifdef FILESYS_NEEDED
-    bool format = FALSE;	// format disk
+	bool format = FALSE;	// format disk
 #endif
 #ifdef NETWORK
-    double rely = 1;		// network reliability
-    int netname = 0;		// UNIX socket name
+	double rely = 1;		// network reliability
+	int netname = 0;// UNIX socket name
 #endif
-    
-    for (argc--, argv++; argc > 0; argc -= argCount, argv += argCount) {
-	argCount = 1;
-	if (!strcmp(*argv, "-d")) {
-	    if (argc == 1)
-		debugArgs = "+";	// turn on all debug flags
-	    else {
-	    	debugArgs = *(argv + 1);
-	    	argCount = 2;
-	    }
-	} else if (!strcmp(*argv, "-rs")) {
-	    ASSERT(argc > 1);
-	    RandomInit(atoi(*(argv + 1)));	// initialize pseudo-random
-						// number generator
-	    randomYield = TRUE;
-	    argCount = 2;
-	}
-#ifdef USER_PROGRAM
-	if (!strcmp(*argv, "-s"))
-	    debugUserProg = TRUE;
-#endif
-#ifdef FILESYS_NEEDED
-	if (!strcmp(*argv, "-f"))
-	    format = TRUE;
-#endif
-#ifdef NETWORK
-	if (!strcmp(*argv, "-l")) {
-	    ASSERT(argc > 1);
-	    rely = atof(*(argv + 1));
-	    argCount = 2;
-	} else if (!strcmp(*argv, "-m")) {
-	    ASSERT(argc > 1);
-	    netname = atoi(*(argv + 1));
-	    argCount = 2;
-	}
-#endif
-    }
 
-    DebugInit(debugArgs);			// initialize DEBUG messages
-    stats = new Statistics();			// collect statistics
-    interrupt = new Interrupt;			// start up interrupt handling
-    scheduler = new NachOSscheduler();		// initialize the ready queue
-    //if (randomYield)				// start the timer (if needed)
+	for (argc--, argv++; argc > 0; argc -= argCount, argv += argCount) {
+		argCount = 1;
+		if (!strcmp(*argv, "-d")) {
+			if (argc == 1)
+				debugArgs = "+";	// turn on all debug flags
+			else {
+				debugArgs = *(argv + 1);
+				argCount = 2;
+			}
+		} else if (!strcmp(*argv, "-rs")) {
+			ASSERT(argc > 1);
+			RandomInit(atoi(*(argv + 1)));	// initialize pseudo-random
+			// number generator
+			randomYield = TRUE;
+			argCount = 2;
+		}
+#ifdef USER_PROGRAM
+		if (!strcmp(*argv, "-s"))
+		debugUserProg = TRUE;
+#endif
+#ifdef FILESYS_NEEDED
+		if (!strcmp(*argv, "-f"))
+		format = TRUE;
+#endif
+#ifdef NETWORK
+		if (!strcmp(*argv, "-l")) {
+			ASSERT(argc > 1);
+			rely = atof(*(argv + 1));
+			argCount = 2;
+		} else if (!strcmp(*argv, "-m")) {
+			ASSERT(argc > 1);
+			netname = atoi(*(argv + 1));
+			argCount = 2;
+		}
+#endif
+	}
+
+	DebugInit(debugArgs);			// initialize DEBUG messages
+	stats = new Statistics();			// collect statistics
+	interrupt = new Interrupt;			// start up interrupt handling
+	scheduler = new NachOSscheduler();		// initialize the ready queue
+	//if (randomYield)				// start the timer (if needed)
 	timer = new Timer(TimerInterruptHandler, 0, randomYield);
 
-    threadToBeDestroyed = NULL;
+	threadToBeDestroyed = NULL;
 
-    // We didn't explicitly allocate the current thread we are running in.
-    // But if it ever tries to give up the CPU, we better have a Thread
-    // object to save its state. 
-    currentThread = new NachOSThread("main");		
-    currentThread->setStatus(RUNNING);
+	// We didn't explicitly allocate the current thread we are running in.
+	// But if it ever tries to give up the CPU, we better have a Thread
+	// object to save its state.
+	currentThread = new NachOSThread("main");
+	currentThread->setStatus(RUNNING);
 
-    interrupt->Enable();
-    CallOnUserAbort(Cleanup);			// if user hits ctl-C
-    
+	interrupt->Enable();
+	CallOnUserAbort(Cleanup);			// if user hits ctl-C
+
 #ifdef USER_PROGRAM
-    machine = new Machine(debugUserProg);	// this must come first
+	machine = new Machine(debugUserProg);	// this must come first
 #endif
 
 #ifdef FILESYS
-    synchDisk = new SynchDisk("DISK");
+	synchDisk = new SynchDisk("DISK");
 #endif
 
 #ifdef FILESYS_NEEDED
-    fileSystem = new FileSystem(format);
+	fileSystem = new FileSystem(format);
 #endif
 
 #ifdef NETWORK
-    postOffice = new PostOffice(netname, rely, 10);
+	postOffice = new PostOffice(netname, rely, 10);
 #endif
 }
 
@@ -186,30 +179,28 @@ Initialize(int argc, char **argv)
 // Cleanup
 // 	Nachos is halting.  De-allocate global data structures.
 //----------------------------------------------------------------------
-void
-Cleanup()
-{
-    printf("\nCleaning up...\n");
+void Cleanup() {
+	printf("\nCleaning up...\n");
 #ifdef NETWORK
-    delete postOffice;
+	delete postOffice;
 #endif
-    
+
 #ifdef USER_PROGRAM
-    delete machine;
+	delete machine;
 #endif
 
 #ifdef FILESYS_NEEDED
-    delete fileSystem;
+	delete fileSystem;
 #endif
 
 #ifdef FILESYS
-    delete synchDisk;
+	delete synchDisk;
 #endif
-    
-    delete timer;
-    delete scheduler;
-    delete interrupt;
-    
-    Exit(0);
+
+	delete timer;
+	delete scheduler;
+	delete interrupt;
+
+	Exit(0);
 }
 
