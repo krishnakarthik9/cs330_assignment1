@@ -68,9 +68,9 @@ static void TimerInterruptHandler(int dummy) {
 				&& (sleepThreadList->first)->key <= currentTime) {
 			thread = (NachOSThread *) (sleepThreadList->SortedRemove(&dummy));
 
-			interrupt->SetLevel(IntOff);
+			//interrupt->SetLevel(IntOff);
 			scheduler->ThreadIsReadyToRun(thread);
-			interrupt->SetLevel(IntOn);
+			//interrupt->SetLevel(IntOn);
 		}
 	}
 }

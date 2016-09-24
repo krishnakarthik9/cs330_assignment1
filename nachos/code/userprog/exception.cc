@@ -223,8 +223,11 @@ void ExceptionHandler(ExceptionType which) {
 			int wakeUpTime = (SleepTime + (stats->totalTicks));
 			sleepThreadList->SortedInsert((void *) currentThread, wakeUpTime);
 			interrupt->SetLevel(IntOff);
+			printf("wakeUpTime=%d\n", wakeUpTime);
 			currentThread->PutThreadToSleep();
+			printf("wakeUpTime=%d\n", wakeUpTime);
 			interrupt->SetLevel(IntOn);
+			printf("wakeUpTime=%d\n", wakeUpTime);
 		}
 
 	} else if ((which == SyscallException) && (type == SYScall_Yield)) {
