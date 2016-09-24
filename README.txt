@@ -79,6 +79,7 @@ SYScall_Exit
 Check if it's parent is waiting for it
 If so then Set interrupts off and start runing paretn using ThreadIsReadyToRun() function
 set interrupts back on
+Make sure to set its childStatus with its exit status so that its parent knows it exited
 Then Destroy the thread using Finish() function
 
 

@@ -311,19 +311,19 @@ ExceptionHandler(ExceptionType which)
     }
 	else if ((which == SyscallException) && (type == SYScall_Fork)) {
 		
-	    	machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
-            machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
-            machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
+	    machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+        machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+        machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)+4);
        
-	    	NachOSThread * childThread = new NachosThread("child thread");//constructor of thread class
-			currentThread->AddChildToParent(childThread->pid,Child_Running);
+	    NachOSThread * childThread = new NachosThread("child thread");//constructor of thread class
+		currentThread->AddChildToParent(childThread->pid,Child_Running);
 
 		//TODO:add code to copy stack and address space to child
 
-			machine->WriteRegister(2,childThread->pid);
-			interrupt->SetLevel(IntOff);
-		    ThreadIsReadyToRun(childThread);
-		    interrupt->SetLevel(IntOn);	
+		machine->WriteRegister(2,childThread->pid);
+		interrupt->SetLevel(IntOff);
+        ThreadIsReadyToRun(childThread);
+        interrupt->SetLevel(IntOn);	
 		 
         }
 	else if ((which == SyscallException) && (type == SYScall_Exit)) {
