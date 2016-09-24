@@ -19,6 +19,8 @@
 #include "switch.h"
 #include "synch.h"
 #include "system.h"
+#include "machine.h"
+
 
 #define STACK_FENCEPOST 0xdeadbeef	// this is put at the top of the
 					// execution stack, for detecting 
@@ -40,8 +42,8 @@ NachOSThread::NachOSThread(char* threadName)
     stackTop = NULL;
     stack = NULL;
     status = JUST_CREATED;
-    startPC=int(machine->ReadRegister(PCReg));//note the starting PC when thread is created so we can count number of instructions executed
-     TotalProcesses++;
+    //startPC=int(machine->ReadRegister(PCReg));//note the starting PC when thread is created so we can count number of instructions executed
+    TotalProcesses++;
     pid=TotalProcesses;
 	childpidArray= new int[MaxThreads];
 	childstatusArray= new int[MaxThreads];
@@ -53,7 +55,10 @@ NachOSThread::NachOSThread(char* threadName)
     {
     	ppid=currentThread->pid;
     }
-   parent=currentThread;
+   if(ppid!=0)
+	{
+ 		parent=currentThread;
+	}
 #ifdef USER_PROGRAM
     space = NULL;
 #endif

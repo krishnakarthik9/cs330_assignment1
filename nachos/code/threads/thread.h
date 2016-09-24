@@ -101,6 +101,17 @@ class NachOSThread {
     void setStatus(ThreadStatus st) { status = st; }
     char* getName() { return (name); }
     void Print() { printf("%s, ", name); }
+    int pid, ppid;          // My pid and my parent's pid
+    int startPC;
+    NachOSThread * parent=NULL;
+    int * childpidArray;
+    int * childstatusArray;
+    int getChildIndex(int childPid);
+    int getChildStatus(int childPid);
+    void setChildStatus(int childPid,int st);
+    void addChildToParent(int childPid,int st);
+    int numChild=0;
+    int endofArray=0;
 
   private:
     // some of the private data for this class is listed above
@@ -124,17 +135,7 @@ class NachOSThread {
   public:
     void SaveUserState();		// save user-level register state
     void RestoreUserState();		// restore user-level register state
-    int pid, ppid;			// My pid and my parent's pid
-    int startPC;//TODO LOOKS correct as each register is of type int
-    NachOSThread * parent;
-    int * childpidArray;
-    int * childstatusArray;
-    int getChildIndex(int childPid);
-    int getChildStatus(int childPid);
-	void setChildStatus(int childPid,int st);
-	void addChildToParent(int childPid,int st);
-    int numChild=0;
-	int endofArray=0;
+    
     ProcessAddrSpace *space;			// User code this thread is running.
 #endif
 };

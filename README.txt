@@ -70,7 +70,7 @@ then set return value to -1
 7)if it is Running then put parent to sleep everytime it wakes Up using PutThreadToSleep in a while loop
 
 SYScall_Exec
-
+Use code from print_String system call to take vaddr from register and converts to a string i.e filename
 Use StartUserProcess() funcion code for Executig the file
 
 SYScall_Fork
@@ -82,7 +82,5 @@ Check if it's parent is waiting for it
 If so then Set interrupts off and start runing paretn using ThreadIsReadyToRun() function
 set interrupts back on
 Make sure to set its childStatus with its exit status so that its parent knows it exited
-Then Destroy the thread using Finish() function
-
-
+Then Destroy the thread using FinishThread() function
 

@@ -316,7 +316,10 @@ void ExceptionHandler(ExceptionType which) {
 
 		NachOSThread * childThread = new NachOSThread("child thread");//constructor of thread class
 		currentThread->addChildToParent(childThread->pid, Child_Running);
-
+		
+		machine->WriteRegister(2,0);
+		childThread->SaveUserState();
+		
 		//TODO: add code to copy stack and address space to child
 
 		machine->WriteRegister(2, childThread->pid);
@@ -328,27 +331,39 @@ void ExceptionHandler(ExceptionType which) {
 		//TODO: test
 		//TODO: complete this
 		int status = (machine->ReadRegister(4));
+		printf("status=%d\n", status);
+
 		if (currentThread->parent != NULL) {
+			printf("entered first if\n");
 			int threadStatusAsChild = (currentThread->parent->getChildStatus(
 					currentThread->pid));
+			printf("threadStatusAsChild=%d\n", threadStatusAsChild);
 
 			if (threadStatusAsChild == Parent_Waiting) {
+				printf("entered second if\n");
 				interrupt->SetLevel(IntOff);
 				scheduler->ThreadIsReadyToRun(currentThread->parent);
 				interrupt->SetLevel(IntOn);
 			}
+			currentThread->parent->setChildStatus(currentThread->pid, status);
 		}
-		currentThread->parent->setChildStatus(currentThread->pid, status);
+		printf("out of if\n");
 		//set its exit status so parent knows it exited
 		currentThread->FinishThread(); //detailed in draft
 
 	} else if ((which == SyscallException) && (type == SYScall_NumInstr)) {
 		//TODO:test		
-		machine->WriteRegister(2,
-				(machine->ReadRegister(PCReg) - currentThread->startPC) / 4); //TODO check if each has its own PC
+		machine->WriteRegister(2,(machine->ReadRegister(PCReg) - currentThread->startPC) / 4); //TODO check if each has its own PC
+		printf("number of instructions=%d\n", (machine->ReadRegister(PCReg) - currentThread->startPC) / 4);
+		printf("old PrevPCReg=%d\n", machine->ReadRegister(PrevPCReg));
 		machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+		printf("new PrevPCReg=%d\n", machine->ReadRegister(PrevPCReg));
+		printf("old PCReg=%d\n", machine->ReadRegister(PCReg));
 		machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+		printf("new PCReg=%d\n", machine->ReadRegister(PCReg));
+		printf("old NextPCReg=%d\n", machine->ReadRegister(NextPCReg));
 		machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) + 4);
+		printf("new NextPCReg=%d\n", machine->ReadRegister(NextPCReg));
 	} else {
 		printf("Unexpected user mode exception %d %d\n", which, type);
 		ASSERT(FALSE);
