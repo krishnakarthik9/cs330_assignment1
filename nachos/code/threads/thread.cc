@@ -43,8 +43,8 @@ NachOSThread::NachOSThread(char* threadName)
     startPC=int(machine->ReadRegister(PCReg));//note the starting PC when thread is created so we can count number of instructions executed
      TotalProcesses++;
     pid=TotalProcesses;
-	childPidArray= new int[MaxThreads];
-	childStatusArray= new int[MaxThreads];
+	childpidArray= new int[MaxThreads];
+	childstatusArray= new int[MaxThreads];
     if(pid==1)
     {
     	ppid=0;
@@ -162,7 +162,7 @@ NachOSThread::getChildIndex(int childPid)
 	int i=0;
 	for(i=0;i<numChild;i++)
 	{
-		if(childPidArray[i]==childPid)
+		if(childpidArray[i]==childPid)
 		{
 		return i; 	
 		}
@@ -173,21 +173,21 @@ int
 NachOSThread::getChildStatus(int childPid)
 {
 	int index=getChildIndex(childPid);
-	return childStatusArray[index];
+	return childstatusArray[index];
 }
 void
 NachOSThread::setChildStatus(int childPid,int st)
 {
 	int index=getChildIndex(childPid);
-	childStatusArray[index]=st;
+	childstatusArray[index]=st;
 	return;
 }
 void
 NachOSThread::addChildToParent(int childPid,int st)
 {
 	numChild++;
-	childpidArray[numChild]=pid
-	childStatusArray[numChild]=st;
+	childpidArray[numChild]=pid;
+	childstatusArray[numChild]=st;
 	return;
 }
 void

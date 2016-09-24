@@ -18,7 +18,7 @@ Interrupt *interrupt;			// interrupt status
 Statistics *stats;			// performance metrics
 Timer *timer;				// the hardware timer device,
 // for invoking context switches
-sleepThreadList = new List();
+List *sleepThreadList = new List();
 
 #ifdef FILESYS_NEEDED
 FileSystem *fileSystem;
@@ -63,7 +63,7 @@ static void TimerInterruptHandler(int dummy) {
 		return;
 	} else {
 		NachOSThread *thread;
-		currentTime = stats->totalTicks;
+		int currentTime = stats->totalTicks;
 		while (!(sleepThreadList->IsEmpty())
 				&& (sleepThreadList->first)->key <= currentTime) {
 			thread = (NachOSThread *) (sleepThreadList->SortedRemove(&dummy));

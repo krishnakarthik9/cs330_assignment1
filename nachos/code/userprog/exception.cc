@@ -174,7 +174,7 @@ void ExceptionHandler(ExceptionType which) {
 				&& (machine->NachOSpageTable[virt_page_num].physicalPage
 						<= NumPhysPages)) {
 			//TODO: verify
-			Translate(virtual_address, &return_value, 4, false);
+			machine->Translate(virtual_address, &return_value, 4, false);
 			//virtual address to physical address should go here(def in translate method)
 		} else {
 			return_value = -1;
@@ -189,7 +189,7 @@ void ExceptionHandler(ExceptionType which) {
 	} else if ((which == SyscallException) && (type == SYScall_Time)) {
 		//TODO: test
 		int curr_ticks = (stats->totalTicks);
-		machine->WriteRegister(2, curr_reg);
+		machine->WriteRegister(2, curr_ticks);
 		// Advance program counters.
 		machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
 		machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
@@ -220,7 +220,7 @@ void ExceptionHandler(ExceptionType which) {
 		if (SleepTime == 0) {
 			currentThread->YieldCPU();
 		} else {
-			wakeUpTime = (SleepTime + (stats->totalTicks));
+			int wakeUpTime = (SleepTime + (stats->totalTicks));
 			sleepThreadList->SortedInsert((void *) currentThread, wakeUpTime);
 			interrupt->SetLevel(IntOff);
 			currentThread->PutThreadToSleep();
@@ -228,7 +228,7 @@ void ExceptionHandler(ExceptionType which) {
 		}
 
 	} else if ((which == SyscallException) && (type == SYScall_Yield)) {
-		//TODO: test
+		//TODO:test
 		machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
 		machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
 		machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) + 4);
@@ -237,7 +237,8 @@ void ExceptionHandler(ExceptionType which) {
 	} else if ((which == SyscallException) && (type == SYScall_Join)) {
 		//TODO: test
 		int childPID = (machine->ReadRegister(4));
-		if (getChildIndex(childPID) == -1) {
+		int returnValue;
+		if (currentThread->getChildIndex(childPID) == -1) {
 			returnValue = -1;
 		} else {
 			//TODO: complete this
@@ -269,10 +270,24 @@ void ExceptionHandler(ExceptionType which) {
 		machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) + 4);
 
 	} else if ((which == SyscallException) && (type == SYScall_Exec)) {
-		//TODO: test
-		int filename = (machine->ReadRegister(4));
+		//TODO:test		
+		//changing code from Print_String
+		char filename[100];
+		int i=0;
+		vaddr = machine->ReadRegister(4);
+		machine->ReadMem(vaddr, 1, &memval);
+		while ((*(char*) &memval) != '\0') {
+			filename[i]=char(memval);
+			i++;
+			vaddr++;
+			machine->ReadMem(vaddr, 1, &memval);
+		}
+
+
+		filename[i]=char(memval);
+
+		
 		//Code from start user process
-		//TODO should add code to change filename into char pointer so Open can work
 		OpenFile *executable = fileSystem->Open(filename);
 		ProcessAddrSpace *space;
 
@@ -299,14 +314,14 @@ void ExceptionHandler(ExceptionType which) {
 		machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
 		machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) + 4);
 
-		NachOSThread * childThread = new NachosThread("child thread");//constructor of thread class
-		currentThread->AddChildToParent(childThread->pid, Child_Running);
+		NachOSThread * childThread = new NachOSThread("child thread");//constructor of thread class
+		currentThread->addChildToParent(childThread->pid, Child_Running);
 
 		//TODO: add code to copy stack and address space to child
 
 		machine->WriteRegister(2, childThread->pid);
 		interrupt->SetLevel(IntOff);
-		ThreadIsReadyToRun(childThread);
+		scheduler->ThreadIsReadyToRun(childThread);
 		interrupt->SetLevel(IntOn);
 
 	} else if ((which == SyscallException) && (type == SYScall_Exit)) {
@@ -319,16 +334,16 @@ void ExceptionHandler(ExceptionType which) {
 
 			if (threadStatusAsChild == Parent_Waiting) {
 				interrupt->SetLevel(IntOff);
-				ThreadIsReadyToRun(currentThread->parent);
+				scheduler->ThreadIsReadyToRun(currentThread->parent);
 				interrupt->SetLevel(IntOn);
 			}
 		}
-		currentThread->parent->setChildStatus(currentThread->pid, status)
+		currentThread->parent->setChildStatus(currentThread->pid, status);
 		//set its exit status so parent knows it exited
-		currentThread->Finish(); //detailed in draft
+		currentThread->FinishThread(); //detailed in draft
 
 	} else if ((which == SyscallException) && (type == SYScall_NumInstr)) {
-		//TODO:
+		//TODO:test		
 		machine->WriteRegister(2,
 				(machine->ReadRegister(PCReg) - currentThread->startPC) / 4); //TODO check if each has its own PC
 		machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));

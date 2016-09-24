@@ -131,7 +131,7 @@ class NachOSThread {
     int * childstatusArray;
     int getChildIndex(int childPid);
     int getChildStatus(int childPid);
-	int setChildStatus(int childPid,int st);
+	void setChildStatus(int childPid,int st);
 	void addChildToParent(int childPid,int st);
     int numChild=0;
 	int endofArray=0;
