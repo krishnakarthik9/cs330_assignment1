@@ -58,5 +58,16 @@ SYScall_Yield
 1)advance PC at the start itself
 2)Just Yield the process using YieldCPU() function
 
+SYScall_Join
+
+1)Created a two new arrays for each process which contain pid's of all its children and
+status of them respectively
+3)We will updating them during appropriate system calls(Fork,Exit etc.)
+4)Check passed pid is the child of given process
+5)if not just set return_value=-1
+6)
+
+
+
 
 
