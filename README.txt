@@ -65,7 +65,9 @@ status of them respectively
 3)We will updating them during appropriate system calls(Fork,Exit etc.)
 4)Check passed pid is the child of given process
 5)if not just set return_value=-1
-6)
+6)then check corresponding childs status if its not child_running it already exited
+then set return value to -1
+7)if it is Running then put parent to sleep everytime it wakes Up using PutThreadToSleep in a while loop
 
 SYScall_Exec
 
