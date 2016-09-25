@@ -42,7 +42,6 @@ NachOSThread::NachOSThread(char* threadName)
     stackTop = NULL;
     stack = NULL;
     status = JUST_CREATED;
-    //startPC=int(machine->ReadRegister(PCReg));//note the starting PC when thread is created so we can count number of instructions executed
     currentInstr = 0;
     TotalProcesses++;
     pid=TotalProcesses;

@@ -84,7 +84,6 @@ void ExceptionHandler(ExceptionType which) {
 	}
 	Console *console = new Console(NULL, NULL, ReadAvail, WriteDone, 0);
 	;
-	currentThread->currentInstr++;
 	if ((which == SyscallException) && (type == SYScall_Halt)) {
 		DEBUG('a', "Shutdown, initiated by user program.\n");
 		interrupt->Halt();
@@ -381,7 +380,6 @@ void ExceptionHandler(ExceptionType which) {
 		machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) + 4);
 		// printf("new NextPCReg=%d\n", machine->ReadRegister(NextPCReg));
 	} else {
-		currentThread->currentInstr--;
 		printf("Unexpected user mode exception %d %d\n", which, type);
 		ASSERT(FALSE);
 	}

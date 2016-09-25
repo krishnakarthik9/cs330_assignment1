@@ -92,7 +92,7 @@ TypeToReg(RegType reg, Instruction *instr)
 
 void
 Machine::OneInstruction(Instruction *instr)
-{
+{	currentThread->currentInstr++;
     int raw;
     int nextLoadReg = 0; 	
     int nextLoadValue = 0; 	// record delayed load operation, to apply
