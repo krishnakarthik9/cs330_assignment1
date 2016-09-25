@@ -20,6 +20,8 @@
 #include "addrspace.h"
 #include "noff.h"
 
+int currPages=0;
+
 //----------------------------------------------------------------------
 // SwapHeader
 // 	Do little endian to big endian conversion on the bytes in the 
@@ -113,6 +115,42 @@ ProcessAddrSpace::ProcessAddrSpace(OpenFile *executable)
 			noffH.initData.size, noffH.initData.inFileAddr);
     }
 
+}
+
+ProcessAddrSpace::ProcessAddrSpace(int numPagesParent,int parentPhysAddrStart)
+{
+	numPagesinVM=numPagesParent;
+	int i;
+	int totalSize=numPagesinVM*PageSize; //PageSize defined in machine.h 
+
+	
+    DEBUG('a', "Initializing address space, num pages %d, size %d\n", 
+					numPagesInVM, size);
+	// first, set up the translation 
+    NachOSpageTable = new TranslationEntry[numPagesInVM];
+    for (i = 0; i < numPagesInVM; i++) {
+	NachOSpageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
+	NachOSpageTable[i].physicalPage = i;
+	NachOSpageTable[i].valid = TRUE;
+	NachOSpageTable[i].use = FALSE;
+	NachOSpageTable[i].dirty = FALSE;
+	NachOSpageTable[i].readOnly = FALSE;  // if the code segment was entirely on 
+					// a separate page, we could set its 
+					// pages to be read-only
+    }
+
+
+	int parentStart,parentEnd,childStart;
+	parentStart=parentPhysAddrStart*PageSize;
+	parentEnd =(parentPhysAddrStart+numPagesParent)*PageSize;
+	childStart=(currPages)*PageSize;
+	while(parentStart<parentEnd)
+	{
+	machine->mainMemory[childStart]=machine->mainMemory[parentStart];
+	childStart++;
+	parentStart++;
+	}
+	currPages=currPages+numPagesParent;
 }
 
 //----------------------------------------------------------------------

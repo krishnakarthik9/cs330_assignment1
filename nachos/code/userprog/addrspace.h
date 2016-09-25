@@ -21,6 +21,8 @@
 class ProcessAddrSpace {
   public:
     ProcessAddrSpace(OpenFile *executable);	// Create an address space,
+	ProcessAddrSpace(int numPagesParent,int parentPhysAddrStart);
+
 					// initializing it with the program
 					// stored in the file "executable"
     ~ProcessAddrSpace();			// De-allocate an address space
@@ -30,8 +32,7 @@ class ProcessAddrSpace {
 
     void SaveStateOnSwitch();			// Save/restore address space-specific
     void RestoreStateOnSwitch();		// info on a context switch 
-
-  private:
+//TODO:removed private here but need to write a function to make it private again
     TranslationEntry *NachOSpageTable;	// Assume linear page table translation
 					// for now!
     unsigned int numPagesInVM;		// Number of pages in the virtual 

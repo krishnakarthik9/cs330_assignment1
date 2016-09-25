@@ -319,12 +319,11 @@ void ExceptionHandler(ExceptionType which) {
 
 		NachOSThread * childThread = new NachOSThread("child thread");//constructor of thread class
 		currentThread->addChildToParent(childThread->pid, Child_Running);
-		
+		childThread->space=new ProcessAdressSpace(currentThread->space->numPagesinVM,currentThread->space->NachOSpageTable[0].phyiscalPage);//TODO change Process Adrress space as required
 		machine->WriteRegister(2,0);
 		childThread->SaveUserState();
 		
-		//TODO: add code to copy stack and address space to child
-
+		childThread->AllocateThreadStack(&childExecutesHere,0);
 		machine->WriteRegister(2, childThread->pid);
 		interrupt->SetLevel(IntOff);
 		scheduler->ThreadIsReadyToRun(childThread);

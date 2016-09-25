@@ -75,6 +75,16 @@ static void TimerInterruptHandler(int dummy) {
 	}
 }
 
+void childExecutesHere() {
+	//Similar to code run after _SWITCH is done
+	if(threadToBeDestroyed!=NULL)
+	{
+		delete threadToBeDestroyed;
+		threadToBeDestroyed=NULL;
+	}
+
+}
+
 //----------------------------------------------------------------------
 // Initialize
 // 	Initialize Nachos global data structures.  Interpret command
