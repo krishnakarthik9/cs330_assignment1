@@ -53,18 +53,22 @@ NachOSscheduler::~NachOSscheduler()
 void
 NachOSscheduler::ThreadIsReadyToRun (NachOSThread *thread)
 {
-	if(thread->pid==2)
-	{
-		printf("parent is = %d",thread->ppid);
-	}	
+    // printf("childPID-----------%d\n", thread->pid);
+	// if(thread->pid==2)
+	// {
+ //        // printf("inside if fffffffffffffff\n");
+	// 	// printf("parent is = %d",thread->ppid);
+	// }	
+    // printf("outside ifff\n");
     DEBUG('t', "Putting thread %s on ready list.\n", thread->getName());
 
     thread->setStatus(READY);
     readyThreadList->Append((void *)thread);
-	if(thread->pid==2)
-        {
-                printf("parent is = %d",thread->ppid);
-        }
+	// if(thread->pid==2)
+ //        {
+ //                printf("parent is = %d",thread->ppid);
+ //        }
+ //        // printf("exitttttttt\n");
 
 }
 
@@ -79,6 +83,7 @@ NachOSscheduler::ThreadIsReadyToRun (NachOSThread *thread)
 NachOSThread *
 NachOSscheduler::FindNextThreadToRun ()
 {
+    // printf("piddddddddd%d\n", currentThread->pid);
     return (NachOSThread *)readyThreadList->Remove();
 }
 
@@ -100,6 +105,7 @@ void
 NachOSscheduler::Schedule (NachOSThread *nextThread)
 {
     NachOSThread *oldThread = currentThread;
+    // printf("piddddddddd222222222=%d\n", nextThread->pid);
     
 #ifdef USER_PROGRAM			// ignore until running user programs 
     if (currentThread->space != NULL) {	// if this thread is a user program,
@@ -141,6 +147,7 @@ NachOSscheduler::Schedule (NachOSThread *nextThread)
 	currentThread->space->RestoreStateOnSwitch();
     }
 #endif
+    // printf("even this is reachable");
 }
 
 //----------------------------------------------------------------------

@@ -84,7 +84,7 @@ void ExceptionHandler(ExceptionType which) {
 	}
 	Console *console = new Console(NULL, NULL, ReadAvail, WriteDone, 0);
 	;
-
+	currentThread->currentInstr++;
 	if ((which == SyscallException) && (type == SYScall_Halt)) {
 		DEBUG('a', "Shutdown, initiated by user program.\n");
 		interrupt->Halt();
@@ -223,11 +223,11 @@ void ExceptionHandler(ExceptionType which) {
 			int wakeUpTime = (SleepTime + (stats->totalTicks));
 			sleepThreadList->SortedInsert((void *) currentThread, wakeUpTime);
 			interrupt->SetLevel(IntOff);
-			printf("wakeUpTime=%d\n", wakeUpTime);
+			// printf("wakeUpTime=%d\n", wakeUpTime);
 			currentThread->PutThreadToSleep();
-			printf("wakeUpTime=%d\n", wakeUpTime);
+			// printf("wakeUpTime=%d\n", wakeUpTime);
 			interrupt->SetLevel(IntOn);
-			printf("wakeUpTime=%d\n", wakeUpTime);
+			// printf("wakeUpTime=%d\n", wakeUpTime);
 		}
 
 	} else if ((which == SyscallException) && (type == SYScall_Yield)) {
@@ -275,6 +275,7 @@ void ExceptionHandler(ExceptionType which) {
 	} else if ((which == SyscallException) && (type == SYScall_Exec)) {
 		//TODO:test		
 		//changing code from Print_String
+		// printf("entered exec\n");
 		char filename[100];
 		int i=0;
 		vaddr = machine->ReadRegister(4);
@@ -305,7 +306,6 @@ void ExceptionHandler(ExceptionType which) {
 
 		space->InitUserCPURegisters();		// set the initial register values
 		space->RestoreStateOnSwitch();		// load page table register
-
 		machine->Run();			// jump to the user progam
 		ASSERT(FALSE);			// machine->Run never returns;
 		// the address space exits
@@ -318,35 +318,41 @@ void ExceptionHandler(ExceptionType which) {
 		machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) + 4);
 
 		NachOSThread * childThread = new NachOSThread("child thread");//constructor of thread class
-		printf("child=%d",childThread->pid);
+		// printf("child=%d",childThread->pid);
 		currentThread->addChildToParent(childThread->pid, Child_Running);
 		childThread->space=new ProcessAddrSpace(currentThread->space->numPagesInVM,currentThread->space->NachOSpageTable[0].physicalPage);//TODO change Process Adrress space as required
 		machine->WriteRegister(2,0);
+		// printf("pid of parent%d\n",childThread->parent->pid);
+		// printf("physicalPage=%d\t\n",currentThread->space->NachOSpageTable[0].physicalPage);
 		childThread->SaveUserState();
-		
-		childThread->AllocateThreadStack(&childExecutesHere,0);
 		machine->WriteRegister(2, childThread->pid);
-		printf("child=%d",childThread->pid);
+		childThread->AllocateThreadStack(&childExecutesHere,0);
+		
+		// printf("childstatus=%d",currentThread->getChildStatus(2));
+		// printf("numchild=%d\n",currentThread->numChild);
 		interrupt->SetLevel(IntOff);
-		printf("child=%d",childThread->pid);
+		// printf("childppid********=%d",childThread->ppid);
+
 		scheduler->ThreadIsReadyToRun(childThread);
-		printf("child=%d",childThread->pid);
+		// printf("childaaaaaaaaaaaaa=%d",childThread->pid);
 		interrupt->SetLevel(IntOn);
+		// printf("childphysaddr=%d\t\n",currentThread->space->NachOSpageTable[0].physicalPage);
 
 	} else if ((which == SyscallException) && (type == SYScall_Exit)) {
 		//TODO: test
 		//TODO: complete this
+		// printf("thread pid calling exit = %d\n", currentThread->pid);
 		int status = (machine->ReadRegister(4));
-		printf("status=%d\n", status);
+		// printf("status=%d\n", status);
 
 		if (currentThread->parent != NULL) {
-			printf("entered first if\n");
+			// printf("entered first if\n");
 			int threadStatusAsChild = (currentThread->parent->getChildStatus(
 					currentThread->pid));
-			printf("threadStatusAsChild=%d\n", threadStatusAsChild);
+			// printf("threadStatusAsChild=%d\n", threadStatusAsChild);
 
 			if (threadStatusAsChild == Parent_Waiting) {
-				printf("entered second if\n");
+				// printf("entered second if\n");
 				interrupt->SetLevel(IntOff);
 				scheduler->ThreadIsReadyToRun(currentThread->parent);
 				interrupt->SetLevel(IntOn);
@@ -357,24 +363,25 @@ void ExceptionHandler(ExceptionType which) {
 		{
 			interrupt->Halt();
 		}
-		printf("out of if\n");
+		// printf("out of if\n");
 		//set its exit status so parent knows it exited
 		currentThread->FinishThread(); //detailed in draft
 
 	} else if ((which == SyscallException) && (type == SYScall_NumInstr)) {
 		//TODO:test		
-		machine->WriteRegister(2,(machine->ReadRegister(PCReg) - currentThread->startPC) / 4); //TODO check if each has its own PC
-		printf("number of instructions=%d\n", (machine->ReadRegister(PCReg) - currentThread->startPC) / 4);
-		printf("old PrevPCReg=%d\n", machine->ReadRegister(PrevPCReg));
+		machine->WriteRegister(2, currentThread->currentInstr); //TODO check if each has its own PC
+		// printf("number of instructions=%d\n", (machine->ReadRegister(PCReg) - currentThread->startPC) / 4);
+		// printf("old PrevPCReg=%d\n", machine->ReadRegister(PrevPCReg));
 		machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
-		printf("new PrevPCReg=%d\n", machine->ReadRegister(PrevPCReg));
-		printf("old PCReg=%d\n", machine->ReadRegister(PCReg));
+		// printf("new PrevPCReg=%d\n", machine->ReadRegister(PrevPCReg));
+		// printf("old PCReg=%d\n", machine->ReadRegister(PCReg));
 		machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
-		printf("new PCReg=%d\n", machine->ReadRegister(PCReg));
-		printf("old NextPCReg=%d\n", machine->ReadRegister(NextPCReg));
+		// printf("PCReg=%d\n", machine->ReadRegister(PCReg));
+		// printf("old NextPCReg=%d\n", machine->ReadRegister(NextPCReg));
 		machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) + 4);
-		printf("new NextPCReg=%d\n", machine->ReadRegister(NextPCReg));
+		// printf("new NextPCReg=%d\n", machine->ReadRegister(NextPCReg));
 	} else {
+		currentThread->currentInstr--;
 		printf("Unexpected user mode exception %d %d\n", which, type);
 		ASSERT(FALSE);
 	}

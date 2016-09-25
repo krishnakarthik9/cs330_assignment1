@@ -99,7 +99,7 @@ ProcessAddrSpace::ProcessAddrSpace(OpenFile *executable)
     
 // zero out the entire address space, to zero the unitialized data segment 
 // and the stack segment
-    bzero(machine->mainMemory, size);
+    bzero(machine->mainMemory, size);//TODO: 
 
 // then, copy in the code and data segments into memory
     if (noffH.code.size > 0) {
@@ -114,7 +114,7 @@ ProcessAddrSpace::ProcessAddrSpace(OpenFile *executable)
         executable->ReadAt(&(machine->mainMemory[noffH.initData.virtualAddr]),
 			noffH.initData.size, noffH.initData.inFileAddr);
     }
-
+    // currPages+=numPagesInVM;
 }
 
 ProcessAddrSpace::ProcessAddrSpace(int numPagesParent,int parentPhysAddrStart)
@@ -130,7 +130,7 @@ ProcessAddrSpace::ProcessAddrSpace(int numPagesParent,int parentPhysAddrStart)
     NachOSpageTable = new TranslationEntry[numPagesInVM];
     for (i = 0; i < numPagesInVM; i++) {
 	NachOSpageTable[i].virtualPage = i;	// for now, virtual page # = phys page #
-	NachOSpageTable[i].physicalPage = i;
+	NachOSpageTable[i].physicalPage = i+currPages;
 	NachOSpageTable[i].valid = TRUE;
 	NachOSpageTable[i].use = FALSE;
 	NachOSpageTable[i].dirty = FALSE;
@@ -207,7 +207,7 @@ void ProcessAddrSpace::SaveStateOnSwitch()
 {}
 
 //----------------------------------------------------------------------
-// ProcessAddrSpace::RestoreStateOnSwitch
+// ProcessAddrSpace::restorestateonswitch
 // 	On a context switch, restore the machine state so that
 //	this address space can run.
 //

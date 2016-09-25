@@ -43,6 +43,7 @@ NachOSThread::NachOSThread(char* threadName)
     stack = NULL;
     status = JUST_CREATED;
     //startPC=int(machine->ReadRegister(PCReg));//note the starting PC when thread is created so we can count number of instructions executed
+    currentInstr = 0;
     TotalProcesses++;
     pid=TotalProcesses;
 	childpidArray= new int[MaxThreads];
@@ -164,11 +165,13 @@ NachOSThread::CheckOverflow()
 int
 NachOSThread::getChildIndex(int childPid)
 { 	
-	int i=0;
-	for(i=0;i<numChild;i++)
-	{
+	int i=1;
+
+	for(;i<numChild+1;i++)
+	{  //printf("childPidarr=%d,i=%d\n",childpidArray[i],i);
 		if(childpidArray[i]==childPid)
 		{
+            // printf("childPid=%d\n",childPid);
 		return i; 	
 		}
 	}
@@ -191,7 +194,7 @@ void
 NachOSThread::addChildToParent(int childPid,int st)
 {
 	numChild++;
-	childpidArray[numChild]=pid;
+	childpidArray[numChild]=childPid;
 	childstatusArray[numChild]=st;
 	return;
 }
@@ -371,5 +374,22 @@ NachOSThread::RestoreUserState()
 {
     for (int i = 0; i < NumTotalRegs; i++)
 	machine->WriteRegister(i, userRegisters[i]);
+}
+void childExecutesHere(int something) {
+    //Similar to code run after _SWITCH is done
+    if(threadToBeDestroyed!=NULL)
+    {
+        delete threadToBeDestroyed;
+        threadToBeDestroyed=NULL;
+    }
+    // printf("in stack fn=%d",currentThread->pid);
+#ifdef USER_PROGRAM
+    if (currentThread->space != NULL)
+    {
+        currentThread->RestoreUserState();     // to restore, do it.
+        currentThread->space->RestoreStateOnSwitch();
+    }
+#endif
+    machine->Run();
 }
 #endif

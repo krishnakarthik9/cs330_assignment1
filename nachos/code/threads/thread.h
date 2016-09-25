@@ -61,7 +61,7 @@ enum ThreadStatus { JUST_CREATED, RUNNING, READY, BLOCKED };
 
 // external function, dummy routine whose sole job is to call NachOSThread::Print
 extern void ThreadPrint(int arg);	 
-
+extern void childExecutesHere(int something);
 // The following class defines a "thread control block" -- which
 // represents a single thread of execution.
 //
@@ -102,7 +102,7 @@ class NachOSThread {
     char* getName() { return (name); }
     void Print() { printf("%s, ", name); }
     int pid, ppid;          // My pid and my parent's pid
-    int startPC;
+    int currentInstr;
     NachOSThread * parent=NULL;
     int * childpidArray;
     int * childstatusArray;
