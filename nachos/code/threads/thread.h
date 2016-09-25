@@ -121,7 +121,7 @@ class NachOSThread {
 					// (If NULL, don't deallocate stack)
     ThreadStatus status;		// ready, running or blocked
     char* name;
-
+    public:
     void AllocateThreadStack(VoidFunctionPtr func, int arg);
     					// Allocate a stack for thread.
 					// Used internally by ThreadFork()

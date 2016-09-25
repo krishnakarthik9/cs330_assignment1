@@ -53,10 +53,19 @@ NachOSscheduler::~NachOSscheduler()
 void
 NachOSscheduler::ThreadIsReadyToRun (NachOSThread *thread)
 {
+	if(thread->pid==2)
+	{
+		printf("parent is = %d",thread->ppid);
+	}	
     DEBUG('t', "Putting thread %s on ready list.\n", thread->getName());
 
     thread->setStatus(READY);
     readyThreadList->Append((void *)thread);
+	if(thread->pid==2)
+        {
+                printf("parent is = %d",thread->ppid);
+        }
+
 }
 
 //----------------------------------------------------------------------

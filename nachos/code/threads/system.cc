@@ -75,13 +75,14 @@ static void TimerInterruptHandler(int dummy) {
 	}
 }
 
-void childExecutesHere() {
+void childExecutesHere(int something) {
 	//Similar to code run after _SWITCH is done
 	if(threadToBeDestroyed!=NULL)
 	{
 		delete threadToBeDestroyed;
 		threadToBeDestroyed=NULL;
 	}
+	printf("in stack fn=%d",currentThread->pid);
 
 }
 

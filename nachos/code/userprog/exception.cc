@@ -318,15 +318,19 @@ void ExceptionHandler(ExceptionType which) {
 		machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) + 4);
 
 		NachOSThread * childThread = new NachOSThread("child thread");//constructor of thread class
+		printf("child=%d",childThread->pid);
 		currentThread->addChildToParent(childThread->pid, Child_Running);
-		childThread->space=new ProcessAdressSpace(currentThread->space->numPagesinVM,currentThread->space->NachOSpageTable[0].phyiscalPage);//TODO change Process Adrress space as required
+		childThread->space=new ProcessAddrSpace(currentThread->space->numPagesInVM,currentThread->space->NachOSpageTable[0].physicalPage);//TODO change Process Adrress space as required
 		machine->WriteRegister(2,0);
 		childThread->SaveUserState();
 		
 		childThread->AllocateThreadStack(&childExecutesHere,0);
 		machine->WriteRegister(2, childThread->pid);
+		printf("child=%d",childThread->pid);
 		interrupt->SetLevel(IntOff);
+		printf("child=%d",childThread->pid);
 		scheduler->ThreadIsReadyToRun(childThread);
+		printf("child=%d",childThread->pid);
 		interrupt->SetLevel(IntOn);
 
 	} else if ((which == SyscallException) && (type == SYScall_Exit)) {
@@ -348,6 +352,10 @@ void ExceptionHandler(ExceptionType which) {
 				interrupt->SetLevel(IntOn);
 			}
 			currentThread->parent->setChildStatus(currentThread->pid, status);
+		}
+		else
+		{
+			interrupt->Halt();
 		}
 		printf("out of if\n");
 		//set its exit status so parent knows it exited

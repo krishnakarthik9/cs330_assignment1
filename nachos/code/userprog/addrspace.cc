@@ -119,13 +119,13 @@ ProcessAddrSpace::ProcessAddrSpace(OpenFile *executable)
 
 ProcessAddrSpace::ProcessAddrSpace(int numPagesParent,int parentPhysAddrStart)
 {
-	numPagesinVM=numPagesParent;
+	numPagesInVM=numPagesParent;
 	int i;
-	int totalSize=numPagesinVM*PageSize; //PageSize defined in machine.h 
+	int totalSize=numPagesInVM*PageSize; //PageSize defined in machine.h 
 
 	
-    DEBUG('a', "Initializing address space, num pages %d, size %d\n", 
-					numPagesInVM, size);
+    DEBUG('a', "Initializing address space, num pages %d, totalsize %d\n", 
+					numPagesInVM, totalSize);
 	// first, set up the translation 
     NachOSpageTable = new TranslationEntry[numPagesInVM];
     for (i = 0; i < numPagesInVM; i++) {
